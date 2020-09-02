@@ -1,0 +1,24 @@
+options:
+  env:
+    - 'KO_DOCKER_REPO=eu.gcr.io/${PROJECT_ID}'
+    - 'DOCKER_REPO_OVERRIDE=eu.gcr.io/${PROJECT_ID}'
+steps:
+  # Build and publish containers`
+  - name: 'gcr.io/$PROJECT_ID/ko'
+    dir: services/user
+    args:
+      - publish
+      - -P
+      - ./cmd/compose
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ["run", "deploy", "user",
+           "--image", "eu.gcr.io/${PROJECT_ID}/github.com/flowup/petermalina/services/user/cmd/compose:latest",
+           "--region", "${_GCR_REGION}",
+           "--platform", "managed",
+           "--allow-unauthenticated",
+           "--update-env-vars", "PROJECT_ID=${PROJECT_ID}"]
+
+substitutions:
+  _GCR_REGION: europe-west4

@@ -1,0 +1,9 @@
+[submodule "apis/3rdparty/api-common-protos"]
+	path = apis/3rdparty/api-common-protos
+	url = https://github.com/googleapis/api-common-protos.git
+[submodule "apis/3rdparty/protoc-gen-validate"]
+	path = apis/3rdparty/protoc-gen-validate
+	url = https://github.com/envoyproxy/protoc-gen-validate.git
+[submodule "apis/3rdparty/protobuf"]
+	path = apis/3rdparty/protobuf
+	url = https://github.com/protocolbuffers/protobuf

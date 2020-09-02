@@ -1,0 +1,9 @@
+options:
+  env:
+    - 'KO_DOCKER_REPO=eu.gcr.io/${PROJECT_ID}'
+    - 'DOCKER_REPO_OVERRIDE=eu.gcr.io/${PROJECT_ID}'
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '--tag=gcr.io/$PROJECT_ID/ko', '-f', 'infrastructure/ko.Dockerfile', 'infrastructure/']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/ko']
