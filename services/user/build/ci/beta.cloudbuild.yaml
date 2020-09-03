@@ -13,7 +13,7 @@ steps:
 
   # Deploy to Cloud Runte
   - name: 'gcr.io/cloud-builders/gcloud'
-    args: ["alpha", "run  ", "deploy", "user",
+    args: ["alpha", "run", "deploy", "user",
            "--image", "eu.gcr.io/${PROJECT_ID}/github.com/flowup/petermalina/services/user/cmd/user:latest",
            "--region", "${_GCR_REGION}",
            "--platform", "managed",
