@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/flowup/petermalina/services/user/pkg/models"
 	"github.com/google/uuid"
@@ -9,7 +10,17 @@ import (
 )
 
 func main() {
-	p, err := cloudevents.NewHTTP(cloudevents.WithTarget("https://models-ygmoaymzvq-ez.a.run.app"))
+	beta := flag.Bool("beta", false, "")
+	flag.Parse()
+
+	target := "https://user-ygmoaymzvq-ez.a.run.app"
+	if *beta {
+		target = "https://beta---user-ygmoaymzvq-ez.a.run.app"
+	}
+
+	log.Println("Targetting:", target)
+
+	p, err := cloudevents.NewHTTP(cloudevents.WithTarget(target))
 	if err != nil {
 		log.Fatalf("Failed to create protocol, %v", err)
 	}

@@ -31,7 +31,7 @@ func main() {
 	var err error
 	L, err = config.Build(zapdriver.WrapCore(
 		zapdriver.ReportAllErrors(true),
-		zapdriver.ServiceName("models"),
+		zapdriver.ServiceName("user"),
 	))
 	if err != nil {
 		panic(err)
@@ -59,6 +59,7 @@ func receive(event cloudevents.Event) *cloudevents.Event {
 	var x models.User
 	err := event.DataAs(&x)
 	if err != nil {
+		L.Fatal(err.Error())
 		return nil
 	}
 
@@ -66,6 +67,7 @@ func receive(event cloudevents.Event) *cloudevents.Event {
 
 	err = event.SetData(cloudevents.ApplicationJSON, &x)
 	if err != nil {
+		L.Fatal(err.Error())
 		return nil
 	}
 
