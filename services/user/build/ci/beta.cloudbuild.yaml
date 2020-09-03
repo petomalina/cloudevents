@@ -18,7 +18,7 @@ steps:
            "--region", "${_GCR_REGION}",
            "--platform", "managed",
            "--no-traffic",
-           "--tag", ""
+           "--tag", "${BRANCH_NAME}",
            "--allow-unauthenticated",
            "--update-env-vars", "PROJECT_ID=${PROJECT_ID}"]
 
