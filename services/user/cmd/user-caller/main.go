@@ -32,8 +32,10 @@ func main() {
 		panic(err)
 	}
 
-	res := c.Send(context.Background(), event)
+	e, res := c.Request(context.Background(), event)
 	if !cloudevents.IsACK(res) {
 		panic(err)
 	}
+
+	log.Println(e)
 }

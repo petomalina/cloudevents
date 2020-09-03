@@ -55,14 +55,14 @@ type User struct {
 	Name string
 }
 
-func receive(event cloudevents.Event) cloudevents.Result {
+func receive(event cloudevents.Event) *cloudevents.Event {
 	L.Info("Received new message", zap.Any("event", event))
 
 	var x User
 	err := event.DataAs(&x)
 	if err != nil {
-		return err
+		return nil
 	}
 
-	return nil
+	return &event
 }
