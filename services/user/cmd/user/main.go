@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"crypto/sha256"
+	"fmt"
 	"github.com/blendle/zapdriver"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/flowup/petermalina/services/user/pkg/models"
@@ -62,7 +64,7 @@ func receive(event cloudevents.Event) *cloudevents.Event {
 		return nil
 	}
 
-	//x.Hash = fmt.Sprintf("%x", sha256.New().Sum(event.Data()))
+	x.Hash = fmt.Sprintf("%x", sha256.New().Sum(event.Data()))
 
 	err = event.SetData(cloudevents.ApplicationJSON, &x)
 	if err != nil {

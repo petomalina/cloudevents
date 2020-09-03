@@ -4,5 +4,5 @@ type User struct {
 	Name  string
 	Email string
 
-	//Hash string
+	Hash string
 }
