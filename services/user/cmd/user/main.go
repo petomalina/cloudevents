@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"crypto/sha1"
 	"github.com/blendle/zapdriver"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
+	"github.com/flowup/petermalina/services/user/pkg/models"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -29,7 +31,7 @@ func main() {
 	var err error
 	L, err = config.Build(zapdriver.WrapCore(
 		zapdriver.ReportAllErrors(true),
-		zapdriver.ServiceName("user"),
+		zapdriver.ServiceName("models"),
 	))
 	if err != nil {
 		panic(err)
@@ -51,15 +53,18 @@ func main() {
 	}
 }
 
-type User struct {
-	Name string
-}
-
 func receive(event cloudevents.Event) *cloudevents.Event {
 	L.Info("Received new message", zap.Any("event", event))
 
-	var x User
+	var x models.User
 	err := event.DataAs(&x)
+	if err != nil {
+		return nil
+	}
+
+	x.Hash = string(sha1.New().Sum(event.Data()))
+
+	err = event.SetData(cloudevents.ApplicationJSON, &x)
 	if err != nil {
 		return nil
 	}
