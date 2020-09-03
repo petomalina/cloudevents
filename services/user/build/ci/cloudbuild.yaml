@@ -11,7 +11,7 @@ steps:
       - -P
       - ./cmd/user
 
-  # Deploy to Cloud Runte
+  # Deploy to Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'
     args: ["run", "deploy", "user",
            "--image", "eu.gcr.io/${PROJECT_ID}/github.com/flowup/petermalina/services/user/cmd/user:latest",
