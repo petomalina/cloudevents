@@ -7,11 +7,13 @@ import (
 	"github.com/blendle/zapdriver"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/flowup/petermalina/services/user/pkg/models"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -56,7 +58,7 @@ func main() {
 		httpReceiver.ServeHTTP(w, r)
 	})
 
-	err = http.ListenAndServe(":"+viper.GetString("port"), router)
+	err = http.ListenAndServe(":"+viper.GetString("port"), handlers.LoggingHandler(os.Stdout, router))
 	if err != nil {
 		panic(err)
 	}
