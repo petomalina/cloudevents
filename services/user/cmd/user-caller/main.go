@@ -34,7 +34,7 @@ func main() {
 	event.SetType("com.petomalina.sample.sent")
 	event.SetSource("https://github.com/cloudevents/sdk-go/v2/samples/requester")
 	err = event.SetData(cloudevents.ApplicationJSON, &models.User{
-		Name: "Peto",
+		Name: "Peter",
 	})
 	if err != nil {
 		panic(err)

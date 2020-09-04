@@ -3,6 +3,7 @@ module github.com/flowup/petermalina/services/user
 go 1.14
 
 require (
+	cloud.google.com/go/firestore v1.3.0 // indirect
 	github.com/blendle/zapdriver v1.3.1
 	github.com/cloudevents/sdk-go/protocol/pubsub/v2 v2.2.0
 	github.com/cloudevents/sdk-go/v2 v2.2.0
