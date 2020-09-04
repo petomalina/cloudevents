@@ -1,11 +1,15 @@
 package main
 
 import (
+	"cloud.google.com/go/pubsub"
 	"context"
 	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 	"github.com/blendle/zapdriver"
+	cepubsub "github.com/cloudevents/sdk-go/protocol/pubsub/v2"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
+	"github.com/cloudevents/sdk-go/v2/binding"
 	"github.com/flowup/petermalina/services/user/pkg/models"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -20,6 +24,11 @@ import (
 var (
 	L *zap.Logger
 )
+
+type PushMessage struct {
+	Message      pubsub.Message `json:"message"`
+	Subscription string         `json:"subscription"`
+}
 
 func main() {
 	ctx := context.Background()
@@ -55,7 +64,27 @@ func main() {
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		L.Info("Routing new message with headers:", zap.Any("headers", r.Header))
-		httpReceiver.ServeHTTP(w, r)
+
+		if strings.HasPrefix(r.Header.Get("user-agent"), "APIs-Google") {
+			msg := PushMessage{}
+			err = json.NewDecoder(r.Body).Decode(&msg)
+			if err != nil {
+				L.Error("An error occurred when unmarhsalling push message:", zap.Error(err))
+				return
+			}
+
+			ceMsg := cepubsub.NewMessage(&msg.Message)
+			ceEvent, err := binding.ToEvent(context.Background(), ceMsg)
+			if err != nil {
+				L.Error("An error occurred when binding message to event:", zap.Error(err))
+				return
+			}
+			receive(*ceEvent)
+
+			L.Info("PubSubMessage Received")
+		} else {
+			httpReceiver.ServeHTTP(w, r)
+		}
 	})
 
 	err = http.ListenAndServe(":"+viper.GetString("port"), handlers.LoggingHandler(os.Stdout, router))
@@ -65,7 +94,7 @@ func main() {
 }
 
 func receive(event cloudevents.Event) *cloudevents.Event {
-	L.Info("Received new HTTP message", zap.Any("event", event))
+	L.Info("Received new event", zap.Any("event", event))
 
 	var x models.User
 	err := event.DataAs(&x)
